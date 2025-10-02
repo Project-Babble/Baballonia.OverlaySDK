@@ -11,6 +11,9 @@ public abstract class PacketHandlerAdapter
     public virtual void OnStartRoutine(RunVariableLenghtRoutinePacket routine)
     {
     }
+    public virtual void OnHmdPositionalData(HmdPositionalDataPacket positionalData)
+    {
+    }
 
     public virtual void OnTermination()
     {
