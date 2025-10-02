@@ -124,4 +124,41 @@ public class OverlayMessageDispatcherTest
             adapter => adapter.OnStartRoutine(
                 It.Is<RunFixedLenghtRoutinePacket>(p => p.RoutineName == packet.RoutineName)), Times.Once);
     }
+
+    [Fact]
+    public void ThrowOnGenericPacketType()
+    {
+        ILoggerFactory factory = LoggerFactory.Create(builder => builder.AddConsole());
+        LoggerImpl loggerImpl = new LoggerImpl(factory.CreateLogger<OverlayMessageDispatcher>());
+
+        var mockConnection = new Mock<IEventDrivenConnection<object, JsonDocument>>();
+
+        var overlayDispatcher =
+            new OverlayMessageDispatcher(loggerImpl, mockConnection.Object);
+
+        Assert.ThrowsAny<Exception>(() =>
+        {
+            overlayDispatcher.Dispatch((IPacket)new EndOfConnectionPacket());
+        });
+    }
+    [Fact]
+    public void SuccessOnConcretePacketType()
+    {
+        ILoggerFactory factory = LoggerFactory.Create(builder => builder.AddConsole());
+        LoggerImpl loggerImpl = new LoggerImpl(factory.CreateLogger<OverlayMessageDispatcher>());
+
+        var mockConnection = new Mock<IEventDrivenConnection<object, JsonDocument>>();
+
+        var overlayDispatcher =
+            new OverlayMessageDispatcher(loggerImpl, mockConnection.Object);
+
+        try
+        {
+            overlayDispatcher.Dispatch(new EndOfConnectionPacket());
+        }
+        catch (Exception any)
+        {
+            Assert.Fail();
+        }
+    }
 }

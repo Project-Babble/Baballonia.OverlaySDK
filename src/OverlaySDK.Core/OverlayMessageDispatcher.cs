@@ -116,6 +116,9 @@ public class OverlayMessageDispatcher : IDisposable
     /// <param name="packet">The payload to send.</param>
     public void Dispatch<T>(T packet) where T : IPacket
     {
+        if(typeof(T) == typeof(IPacket))
+            throw new ArgumentException("IPacket itself is not allowed. Use a concrete implementation.");
+        
         Packet<T> p = new Packet<T>(packet);
         _connection.Send(p);
     }
