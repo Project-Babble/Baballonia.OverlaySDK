@@ -1,11 +1,12 @@
 name: Build
-  on:
-    workflow_dispatch:
-      inputs:
-        publish-release:
-          description: 'Push to Nuget'
-          type: boolean
-          default: false
+
+on:
+  workflow_dispatch:
+    inputs:
+      publish-release:
+        description: 'Push to Nuget'
+        type: boolean
+        default: false
           
 jobs:
   build:
