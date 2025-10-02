@@ -3,7 +3,7 @@ name: Build
 on:
   workflow_dispatch:
     inputs:
-      publish-release:
+      publish-nuget:
         description: 'Push to Nuget'
         type: boolean
         default: false
@@ -31,5 +31,12 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: "Baballonia.OverlaySDK.nupkg"
+          name: "Project-Babble.Baballonia.OverlaySDK"
           path: "nupkgs/*"
+
+      - name: Push nupkg to NuGet
+        if: ${{ github.event.inputs.publish-nuget == 'true' }}
+        run: |
+          for nupkg in nupkgs/*.nupkg; do
+            dotnet nuget push "$nupkg" --source "nuget.org" --skip-duplicate --api-key ${{ secrets.NUGET_API_KEY }}
+          done

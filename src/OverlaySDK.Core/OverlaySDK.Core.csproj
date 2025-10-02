@@ -5,6 +5,10 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <RootNamespace>OverlaySDK</RootNamespace>
+    <PackageId>Project-Babble.Baballonia.OverlaySDK</PackageId>
+    <Authors>Project-Babble</Authors>
+    <PackageLicenseUrl>https://github.com/Project-Babble/Baballonia.OverlaySDK/blob/main/LICENSE</PackageLicenseUrl>
+    <RepositoryUrl>https://github.com/Project-Babble/Baballonia.OverlaySDK</RepositoryUrl>
   </PropertyGroup>
 
 </Project>
