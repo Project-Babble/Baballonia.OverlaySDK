@@ -16,6 +16,10 @@ public abstract class PacketHandlerAdapter
     {
     }
 
+    public virtual void OnTrainerProgressReport(TrainerProgressReportPacket progressReport)
+    {
+    }
+
     public virtual void OnTermination()
     {
     }

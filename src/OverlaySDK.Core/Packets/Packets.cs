@@ -35,6 +35,15 @@ public class HmdPositionalDataPacket : IPacket
     public float RightEyeYaw { get; set; } // degrees
 }
 
+public record TrainerProgressReportPacket(
+    string ProgressName,
+    int CurrentProgress,
+    int TargetProgress,
+    double Loss
+) : IPacket
+{
+}
+
 public class Packet<T> where T : IPacket
 {
     public string PacketName { get; set; }
