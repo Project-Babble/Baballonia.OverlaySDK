@@ -20,6 +20,10 @@ public record RunVariableLenghtRoutinePacket(string RoutineName, TimeSpan Time) 
 {
 }
 
+public record RoutineFinishedPacket(string RoutineName) : IPacket
+{
+}
+
 public class HmdPositionalDataPacket : IPacket
 {
     public float RoutinePitch { get; set; } // degrees

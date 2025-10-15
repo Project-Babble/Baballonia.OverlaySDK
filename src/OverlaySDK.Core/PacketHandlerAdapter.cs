@@ -20,6 +20,10 @@ public abstract class PacketHandlerAdapter
     {
     }
 
+    public virtual void OnRoutineFinishedPacket(RoutineFinishedPacket packet)
+    {
+    }
+
     public virtual void OnTermination()
     {
     }
