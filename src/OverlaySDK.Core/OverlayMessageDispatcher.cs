@@ -40,6 +40,7 @@ public class OverlayMessageDispatcher : IDisposable
     private readonly Dictionary<string, List<PacketHandlerAdapter>> _adaptersPerPacket = new();
     private readonly Dictionary<string, Action<PacketHandlerAdapter, object>> _methodDispatcher;
     private readonly List<PacketHandlerAdapter> _adapters = [];
+    private object _lock = new();
 
     private readonly ILogger _logger;
     private readonly IEventDrivenConnection<object, JsonDocument> _connection;
@@ -79,19 +80,21 @@ public class OverlayMessageDispatcher : IDisposable
     /// <param name="adapter">The adapter instance to register.</param>
     public void RegisterHandler(PacketHandlerAdapter adapter)
     {
-        foreach (var packetName in _methodDispatcher.Keys)
+        lock (_lock)
         {
-            if (!_adaptersPerPacket.TryGetValue(packetName, out var list))
+            foreach (var packetName in _methodDispatcher.Keys)
             {
-                list = new List<PacketHandlerAdapter>();
-                _adaptersPerPacket[packetName] = list;
+                if (!_adaptersPerPacket.TryGetValue(packetName, out var list))
+                {
+                    list = new List<PacketHandlerAdapter>();
+                    _adaptersPerPacket[packetName] = list;
+                }
+
+                if (!list.Contains(adapter))
+                    list.Add(adapter);
             }
-
-            if (!list.Contains(adapter))
-                list.Add(adapter);
+            _adapters.Add(adapter);
         }
-
-        _adapters.Add(adapter);
     }
 
     /// <summary>
@@ -101,12 +104,18 @@ public class OverlayMessageDispatcher : IDisposable
     /// <param name="adapter">The adapter instance to unregister.</param>
     public void UnRegisterHandler(PacketHandlerAdapter adapter)
     {
-        foreach (var list in _adaptersPerPacket.Values)
+        lock (_lock)
         {
-            list.Remove(adapter);
-        }
+            foreach (var list in _adaptersPerPacket.Values)
+            {
+                list.Remove(adapter);
+            }
 
-        _adapters.Remove(adapter);
+            lock (_lock)
+            {
+                _adapters.Remove(adapter);
+            }
+        }
     }
 
     /// <summary>
@@ -182,15 +191,18 @@ public class OverlayMessageDispatcher : IDisposable
 
     private void NotifyAdapters(string packetName, object obj)
     {
-        if (!_methodDispatcher.TryGetValue(packetName, out var method))
-            return;
-
-        if (!_adaptersPerPacket.TryGetValue(packetName, out var adapters))
-            return;
-
-        foreach (var packetHandlerAdapter in adapters)
+        lock (_lock)
         {
-            method(packetHandlerAdapter, obj);
+            if (!_methodDispatcher.TryGetValue(packetName, out var method))
+                return;
+
+            if (!_adaptersPerPacket.TryGetValue(packetName, out var adapters))
+                return;
+
+            foreach (var packetHandlerAdapter in adapters)
+            {
+                method(packetHandlerAdapter, obj);
+            }
         }
     }
 
