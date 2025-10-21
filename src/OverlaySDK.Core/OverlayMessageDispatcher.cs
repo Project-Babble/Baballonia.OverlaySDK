@@ -93,6 +93,7 @@ public class OverlayMessageDispatcher : IDisposable
                 if (!list.Contains(adapter))
                     list.Add(adapter);
             }
+
             _adapters.Add(adapter);
         }
     }
@@ -111,10 +112,7 @@ public class OverlayMessageDispatcher : IDisposable
                 list.Remove(adapter);
             }
 
-            lock (_lock)
-            {
-                _adapters.Remove(adapter);
-            }
+            _adapters.Remove(adapter);
         }
     }
 
@@ -125,9 +123,9 @@ public class OverlayMessageDispatcher : IDisposable
     /// <param name="packet">The payload to send.</param>
     public void Dispatch<T>(T packet) where T : IPacket
     {
-        if(typeof(T) == typeof(IPacket))
+        if (typeof(T) == typeof(IPacket))
             throw new ArgumentException("IPacket itself is not allowed. Use a concrete implementation.");
-        
+
         Packet<T> p = new Packet<T>(packet);
         _connection.Send(p);
     }
