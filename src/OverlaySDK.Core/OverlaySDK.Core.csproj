@@ -9,7 +9,7 @@
     <Authors>Project-Babble</Authors>
     <PackageLicenseUrl>https://github.com/Project-Babble/Baballonia.OverlaySDK/blob/main/LICENSE</PackageLicenseUrl>
     <RepositoryUrl>https://github.com/Project-Babble/Baballonia.OverlaySDK</RepositoryUrl>
-    <Version>1.0.3-alpha</Version>
+    <Version>1.0.4-alpha</Version>
   </PropertyGroup>
 
 </Project>

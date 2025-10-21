@@ -199,8 +199,10 @@ public class OverlayMessageDispatcher : IDisposable
             if (!_adaptersPerPacket.TryGetValue(packetName, out var adapters))
                 return;
 
-            foreach (var packetHandlerAdapter in adapters)
+            // This needs to be a for loop, foreach crashes
+            for (var index = 0; index < adapters.Count; index++)
             {
+                var packetHandlerAdapter = adapters[index];
                 method(packetHandlerAdapter, obj);
             }
         }
