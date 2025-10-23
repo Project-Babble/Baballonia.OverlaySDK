@@ -189,21 +189,24 @@ public class OverlayMessageDispatcher : IDisposable
 
     private void NotifyAdapters(string packetName, object obj)
     {
-        lock (_lock)
-        {
-            if (!_methodDispatcher.TryGetValue(packetName, out var method))
-                return;
-
-            if (!_adaptersPerPacket.TryGetValue(packetName, out var adapters))
-                return;
-
-            // This needs to be a for loop, foreach crashes
-            for (var index = 0; index < adapters.Count; index++)
+            Action<PacketHandlerAdapter, object>? action;
+            List<PacketHandlerAdapter>? snapshot;
+        
+            lock (_lock)
             {
-                var packetHandlerAdapter = adapters[index];
-                method(packetHandlerAdapter, obj);
+                if (!_methodDispatcher.TryGetValue(packetName, out action))
+                    return;
+                if (!_adaptersPerPacket.TryGetValue(packetName, out var list))
+                    return;
+        
+                snapshot = list.ToList();
             }
-        }
+        
+            // Call outside lock
+            foreach (var adapter in snapshot)
+            {
+                action(adapter, obj);
+            }
     }
 
     /// <summary>
